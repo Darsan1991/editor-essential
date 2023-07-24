@@ -1,4 +1,6 @@
+#if UNITY_EDITOR
 using DGames.Essentials.EditorHelpers;
+#endif
 using UnityEngine;
 
 namespace DGames.Essentials.Attributes
