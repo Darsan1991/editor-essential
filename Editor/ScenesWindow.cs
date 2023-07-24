@@ -8,7 +8,7 @@ namespace DGames.Essentials.Editor
         [MenuItem("Window/Scenes")]
         public static void Open()
         {
-            Open<ScenesWindow>("t:Scene","Scenes");
+            Open<ScenesWindow>("t:Scene","Scenes",icon:"Scene");
         }
     }
 }

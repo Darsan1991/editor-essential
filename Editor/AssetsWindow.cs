@@ -16,11 +16,12 @@ namespace DGames.Essentials.Editor
 
 
         
-        public static void Open<T>(string filter,string title,bool isSelectOnClick = false) where T:AssetsWindow
+        public static void Open<T>(string filter,string title,bool isSelectOnClick = false,string icon="") where T:AssetsWindow
         {
             var assetsWindow = GetWindow<T>();
             assetsWindow.minSize = new Vector2(assetsWindow.minSize.x,10);
-            assetsWindow.titleContent = new GUIContent(title);
+            assetsWindow.titleContent = new GUIContent(title,string.IsNullOrWhiteSpace(icon)?null: EditorGUIUtility.IconContent(icon).image);
+            
             assetsWindow.isSelectOnClick = isSelectOnClick;
             assetsWindow.filter = filter;
             assetsWindow.Refresh();
@@ -32,16 +33,20 @@ namespace DGames.Essentials.Editor
         {
             rootVisualElement.Add(new IMGUIContainer(() =>
             {
-                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Refresh", GUILayout.MaxWidth(70)))
+                if (GUILayout.Button("Refresh", EditorStyles.toolbarButton,GUILayout.MaxWidth(70)))
                 {
                     Refresh();
                 }
                
                 EditorGUILayout.EndHorizontal();
-            }));
-            _contentElement = new VisualElement();
+            })
+               
+            );
+            _contentElement = new VisualElement(){
+                style = { marginTop = 10,marginLeft = 10,marginRight = 10}
+            };
             rootVisualElement.Add(_contentElement);
             Refresh();
         }
@@ -61,17 +66,18 @@ namespace DGames.Essentials.Editor
                 }
                 while (assets.Count>0)
                 {
-                    var count = DrawHorizontal(assets,item=>item.name,GUI.skin.box,OnDrawItem);
+                    var count = DrawHorizontal(assets,item=>item.name,GUI.skin.box,OnDrawItem,Mathf.Max(EditorGUIUtility.currentViewWidth - 20,40));
                     assets = assets.Skip(count).ToList();
                 }
+                
             }));
         }
 
         // ReSharper disable once TooManyArguments
-        private int DrawHorizontal<T>(IEnumerable<T> items,Func<T,string> contentSelector,GUIStyle skin,Action<T,float> onDrawItem,float extraWidth = 4)
+        private int DrawHorizontal<T>(IEnumerable<T> items,Func<T,string> contentSelector,GUIStyle skin,Action<T,float> onDrawItem,float availableWidth,float extraWidth = 4)
         {
             EditorGUILayout.BeginHorizontal();
-            var leftWidth = EditorGUIUtility.currentViewWidth;
+            var leftWidth = availableWidth;
             var count = 0;
             foreach (var item in items)
             {
