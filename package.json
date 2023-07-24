@@ -1,7 +1,7 @@
 {
-    "name": "com.dgames.unityessentials",
+    "name": "com.dgames.editoressentials",
     "version": "1.0.0",
-    "displayName": "Essential Package",
+    "displayName": "Essential Editor Package",
     "description": "Provide basic functionality for project",
     "unity":"2021.3",
     "author": {
