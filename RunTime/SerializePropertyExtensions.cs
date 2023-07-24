@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -153,6 +154,7 @@ namespace DGames.Essentials.EditorHelpers
             }
         }
 
+        // ReSharper disable once FlagArgument
         public static Type GetValueType(this SerializedProperty property, int skips = 0, bool skipGenetic = true)
         {
             // Debug.Log(property.propertyPath);
@@ -521,3 +523,4 @@ namespace DGames.Essentials.EditorHelpers
         }
     }
 }
+#endif
