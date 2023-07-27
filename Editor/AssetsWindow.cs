@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace DGames.Essentials.Editor
 {
@@ -16,6 +17,7 @@ namespace DGames.Essentials.Editor
 
 
         
+        // ReSharper disable once TooManyArguments
         public static void Open<T>(string filter,string title,bool isSelectOnClick = false,string icon="") where T:AssetsWindow
         {
             var assetsWindow = GetWindow<T>();
@@ -54,8 +56,7 @@ namespace DGames.Essentials.Editor
         public void Refresh()
         {
             _contentElement.Clear();
-            var searchAssets = AssetDatabase.FindAssets(filter).Select(AssetDatabase.GUIDToAssetPath)
-                .Select(AssetDatabase.LoadMainAssetAtPath).ToList();
+            var searchAssets = FindAssets().ToList();
             _contentElement.Add(new IMGUIContainer(() =>
             {
                 var assets = searchAssets.ToList();
@@ -71,6 +72,12 @@ namespace DGames.Essentials.Editor
                 }
                 
             }));
+        }
+
+        protected virtual IEnumerable<Object> FindAssets()
+        {
+            return AssetDatabase.FindAssets(filter).Select(AssetDatabase.GUIDToAssetPath)
+                .Select(AssetDatabase.LoadMainAssetAtPath);
         }
 
         // ReSharper disable once TooManyArguments

@@ -26,4 +26,20 @@ namespace DGames.Essentials.Attributes
             Color = new Color(r, g, b,a);
         }
     }
+
+    public sealed class TestAttribute1 : PropertyAttribute
+    {
+        
+    }
+    
+    public sealed class TestAttribute2 : PropertyAttribute
+    {
+        
+    }
+    
+        
+    public sealed class TestAttribute3 : PropertyAttribute
+    {
+        
+    }
 }

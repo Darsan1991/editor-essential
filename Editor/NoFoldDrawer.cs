@@ -79,4 +79,71 @@ namespace DGames.Essentials.Editor
             return position;
         }
     }
+    
+     [CustomPropertyDrawer(typeof(TestAttribute1))]
+    public class TestAttribute1Drawer : PropertyDrawer
+    {
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label) + EditorGUIUtility.singleLineHeight*4;
+        }
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            // base.OnGUI(position, property, label);
+            EditorGUI.LabelField(position,label);
+
+            position.y += EditorGUIUtility.singleLineHeight;
+            EditorGUI.PropertyField(position, property, label);
+            position.y += EditorGUIUtility.singleLineHeight;
+
+            EditorGUI.PropertyField(position, property, label);
+            position.y += EditorGUIUtility.singleLineHeight;
+
+            EditorGUI.PropertyField(position, property, label);
+        }
+
+        
+    }
+    
+    [CustomPropertyDrawer(typeof(TestAttribute2))]
+    public class TestAttribute2Drawer : PropertyDrawer
+    {
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label) + EditorGUIUtility.singleLineHeight;
+        }
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            // base.OnGUI(position, property, label);
+            EditorGUI.LabelField(position,label.text+"Label 2");
+            position.y += EditorGUIUtility.singleLineHeight;
+            EditorGUI.PropertyField(position, property, label);
+
+        }
+
+        
+    }
+    
+    [CustomPropertyDrawer(typeof(TestAttribute3))]
+    public class TestAttribute3Drawer : PropertyDrawer
+    {
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label) + EditorGUIUtility.singleLineHeight;
+        }
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            // base.OnGUI(position, property, label);
+            EditorGUI.LabelField(position,label.text+"Label 3");
+
+        }
+
+        
+    }
 }

@@ -44,7 +44,7 @@ namespace DGames.Essentials.Editor
 
                  while(serializedProperty.NextVisible(false))
                  {
-                     EditorGUILayout.PropertyField(serializedProperty, true);
+                     DrawPropertyField(serializedProperty);
                  }
 
              }
@@ -53,6 +53,11 @@ namespace DGames.Essentials.Editor
              DrawOtherDefaults();
              
              DrawFooterIfCan();
+         }
+
+         private static void DrawPropertyField(SerializedProperty serializedProperty)
+         {
+             EditorGUILayout.PropertyField(serializedProperty, true);
          }
 
          private void DrawFooterIfCan()
