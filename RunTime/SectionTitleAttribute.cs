@@ -17,4 +17,21 @@ namespace DGames.Essentials.Attributes
         
 
     }
+    
+    public sealed class SectionFoldAttribute : PropertyAttribute
+    {
+        public string Title { get; }
+        public int Above { get; }
+        public int Below { get; }
+
+        // ReSharper disable once TooManyDependencies
+        public SectionFoldAttribute(string title=null,int above=0,int below=0)
+        {
+            Title = title;
+            Above = above;
+            Below = below;
+        }
+        
+
+    }
 }

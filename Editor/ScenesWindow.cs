@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.Build.Content;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace DGames.Essentials.Editor
 {

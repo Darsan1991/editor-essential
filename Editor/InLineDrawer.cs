@@ -17,7 +17,6 @@ namespace DGames.Essentials.Editor
     {
         public InlineAttribute Attribute => (InlineAttribute)attribute;
 
-        private bool ConditionSatisfy => Attribute.MinWidth < EditorGUIUtility.currentViewWidth;
 
         private readonly Dictionary<SerializedPropertyType, float> _typeVsWidth = new();
         private readonly Dictionary<string, BaseConditionAttribute> _typeVsConditions = new();
@@ -30,12 +29,12 @@ namespace DGames.Essentials.Editor
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            var childrenHeight = ConditionSatisfy && property.isExpanded
+            var childrenHeight = IsActive(property) && property.isExpanded
                 ? property.Copy().GetPropertyWithDefaultChildren().Skip(1)
                     .Where(p => !p.propertyType.IsBuildInSerializableField()).Select(EditorGUI.GetPropertyHeight)
                     .Sum()
                 : 0;
-            return ConditionSatisfy
+            return  IsActive(property)
                 ? (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 1)
                   + (Attribute.DrawBox ? EditorGUIUtility.standardVerticalSpacing * 5 : 0)
                   + childrenHeight
@@ -44,10 +43,13 @@ namespace DGames.Essentials.Editor
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            
+            
+            
             if (DrawDefaultIfConditionNotSatisfy(position, property)) return;
             position = HandleDrawBox(position, property, label);
             position.height = EditorGUIUtility.singleLineHeight;
-
+            
             CacheComplexField(property);
             CachePropertyConditions(property);
             CacheWidthForProperty(position, property);
@@ -94,9 +96,10 @@ namespace DGames.Essentials.Editor
             var startWidth = position.width;
             if (_complexChildren.Count > 0)
             {
-                position.width = 25;
+                position.width = 15;
                 property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, "");
                 expanded = property.isExpanded;
+                position.x += position.width;
                 position.width = startWidth - position.width;
             }
             else
@@ -107,7 +110,7 @@ namespace DGames.Essentials.Editor
 
         private bool DrawDefaultIfConditionNotSatisfy(Rect position, SerializedProperty property)
         {
-            if (ConditionSatisfy) return false;
+            if (IsActive(property)) return false;
             
             EditorGUI.PropertyField(position, property, new GUIContent(property.displayName), true);
             return true;
@@ -124,7 +127,13 @@ namespace DGames.Essentials.Editor
             _complexChildren.Clear();
             _complexChildren.AddRange(property.GetPropertyWithDefaultChildren().Skip(1)
                 .Where(p => !p.propertyType.IsBuildInSerializableField()).Select(p => p.name));
+            Debug.Log(string.Join(",",_complexChildren));
             _hasCacheComplexField = true;
+        }
+        
+        public bool IsActive(SerializedProperty property)
+        {
+           return !property.propertyType.IsBuildInSerializableField() && Attribute.MinWidth < EditorGUIUtility.currentViewWidth;
         }
 
         private bool IsVisible(SerializedProperty property)
@@ -157,6 +166,10 @@ namespace DGames.Essentials.Editor
         {
             _typeVsWidth.Clear();
 
+            // position.width -= EditorGUI.indentLevel * 15;
+            // position.x += EditorGUI.indentLevel * 15;
+            // Debug.Log(EditorGUI.indentLevel);
+            position.width -= _complexChildren.Any() ? 15 : 0;
             var nonBoolPropertyWidth = CalculateNonBoolPropertyWidth(position, property);
 
             foreach (var type in Enum
@@ -206,14 +219,12 @@ namespace DGames.Essentials.Editor
 
         private static Rect DrawProperty(Rect position, SerializedProperty property)
         {
-            var content = new GUIContent(property.displayName.Substring(0,Mathf.Min(1,property.displayName.Length)) + "",property.displayName);
+            var content = new GUIContent(property.displayName[..Mathf.Min(1,property.displayName.Length)] + "",property.displayName);
             GUI.Label(position,content);
             
             position.position += Vector2.right * 15;
-            // position.width -= size.x + 2;
             EditorGUI.PropertyField(position, property, GUIContent.none);
-
-
+            
             position.position += Vector2.right * position.width;
 
             return position;

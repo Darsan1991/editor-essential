@@ -424,39 +424,38 @@ namespace DGames.Essentials.Editor
         }
         
         
-        public static SerializedProperty FindRelativePropertyAd(this SerializedProperty property, string toGet)
+        
+        public static SerializedProperty FindRelativePropertyAd(this SerializedObject so, string toGet)
         {
-            if (property.depth == 0) return property.serializedObject.FindProperty(toGet);
             
-            var path = property.propertyPath.Replace(".Array.data[", "[");
+            var path = toGet.Replace(".Array.data[", "[");
             var elements = path.Split('.');
             
-            var nestedProperty = NestedPropertyOrigin(property, elements);
+            var nestedProperty = NestedProperty(so, elements);
             
             // if nested property is null = we hit an array property
             if (nestedProperty == null)
             {
                 var cleanPath = path[..path.IndexOf('[')];
-                var arrayProp = property.serializedObject.FindProperty(cleanPath);
+                var arrayProp = so.FindProperty(cleanPath);
                 // if (_warningsPool.Contains(arrayProp.exposedReferenceValue)) return null;
                 var target = arrayProp.serializedObject.targetObject;
-                var who = string.Format("Property <color=brown>{0}</color> in object <color=brown>{1}</color> caused: ", arrayProp.name,
-                    target.name);
+                var who =
+                    $"Property <color=brown>{arrayProp.name}</color> in object <color=brown>{target.name}</color> caused: ";
             
                 Debug.LogWarning(who + "Array fields is not supported by [ConditionalFieldAttribute]", target);
-                // _warningsPool.Add(arrayProp.exposedReferenceValue);
                 return null;
             }
             
-            return nestedProperty.FindPropertyRelative(toGet);
+            return nestedProperty;
         }
 
         // For [Serialized] types with [Conditional] fields
-        private static SerializedProperty NestedPropertyOrigin(SerializedProperty property, IReadOnlyList<string> elements)
+        private static SerializedProperty NestedProperty(SerializedObject so, IReadOnlyList<string> elements)
         {
             SerializedProperty parent = null;
 
-            for (var i = 0; i < elements.Count - 1; i++)
+            for (var i = 0; i < elements.Count; i++)
             {
                 var element = elements[i];
                 var index = -1;
@@ -468,7 +467,7 @@ namespace DGames.Essentials.Editor
                 }
 
                 parent = i == 0
-                    ? property.serializedObject.FindProperty(element)
+                    ? so.FindProperty(element)
                     : parent!.FindPropertyRelative(element);
                 if (index >= 0) parent = parent.GetArrayElementAtIndex(index);
             }

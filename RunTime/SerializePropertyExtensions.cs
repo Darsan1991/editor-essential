@@ -490,11 +490,23 @@ namespace DGames.Essentials.EditorHelpers
             return nestedProperty.FindPropertyRelative(toGet);
         }
 
-        public static bool IsArrayChildElement(this SerializedProperty property)
+        public static bool IsArrayChildElement(this SerializedProperty property) => property.IsArrayChildElement(out _,out _);
+        public static bool IsArrayChildElement(this SerializedProperty property,out string parentPath,out int index)
         {
             var items = property.propertyPath.Split('.');
+            var isChild = items is { Length: >= 2 } && items[^2] == "Array";
 
-            return items is { Length: >= 2 } && items[^2] == "Array";
+            parentPath = isChild ? string.Join(".", items.SkipLast(2)) : "";
+            index = isChild ? GetIndexFromPropertyPathArray(property.propertyPath) : -1;
+            
+            return isChild;
+        }
+
+        private static int GetIndexFromPropertyPathArray(string path)
+        {
+            Debug.Log(path);
+            var index = path.IndexOf('[');
+            return int.Parse(path.Substring(index + 1, path.IndexOf(']') - index - 1));
         }
 
         // For [Serialized] types with [Conditional] fields
