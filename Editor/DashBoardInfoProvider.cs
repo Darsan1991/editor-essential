@@ -32,6 +32,8 @@ namespace DGames.Essentials.Editor
             CacheTabMessages();
         }
 
+        public bool ContainsTab(string tabPath) => _tabVsMenuItems.ContainsKey(tabPath);
+
         public void RefreshTab(string tabPath)
         {
             _tabVsMenuItems.Remove(tabPath);

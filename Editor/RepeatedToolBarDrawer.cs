@@ -57,8 +57,10 @@ namespace DGames.Essentials.Editor
             EditorGUILayout.EndHorizontal();
             var newPath = _tabs[index].title;
 
+            
             if (_tabs[index].children.Any())
                 newPath += "/" + DrawNextedTabs(_tabs[index], tabs.Skip(1).ToList());
+            // Debug.Log($"{path}:{_tabs[index].title}:{newPath}");
 
             return newPath;
         }
@@ -82,7 +84,10 @@ namespace DGames.Essentials.Editor
         {
             if (!nextedTabs.Any() && GetLastSelectedNextedTabs(parentTab).Any() ||
                 nextedTabs.Any() && !parentTab.children.Contains(nextedTabs.First()))
+            {
+                Debug.Log("Parent Changed:"+string.Join(",",GetLastSelectedNextedTabs(parentTab).Select(t=>t.title)));
                 return DrawNextedTabs(parentTab, GetLastSelectedNextedTabs(parentTab).ToList());
+            }
 
             var index = nextedTabs.Any() ? parentTab.children.IndexOf(nextedTabs.First()) : 0;
 
