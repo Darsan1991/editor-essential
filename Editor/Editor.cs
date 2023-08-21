@@ -90,8 +90,6 @@ namespace DGames.Essentials.Editor
                     EditorGUILayout.PropertyField(serializedProperty);
                     EditorGUI.EndDisabledGroup();
                 }
-
-
                 DrawScriptLogoIfCan();
 
                 while (serializedProperty.NextVisible(false))
@@ -160,7 +158,7 @@ namespace DGames.Essentials.Editor
 
         protected virtual void DrawOtherDefaults()
         {
-            _buttonsDrawer.DrawButtons(targets);
+            _buttonsDrawer?.DrawButtons(targets);
         }
 
         public static string GetTitleWithSymbols(string title, int countPerSide = 70, string symbol = "#")
