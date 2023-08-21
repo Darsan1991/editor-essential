@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using DGames.Essentials.Attributes;
 using UnityEditor;
+using UnityEditor.Presets;
 using UnityEngine;
 using MessageType = UnityEditor.MessageType;
 using Object = UnityEngine.Object;
@@ -10,6 +11,7 @@ using Object = UnityEngine.Object;
 namespace DGames.Essentials.Editor
 {
     [CustomMenuEditor(typeof(ObjectMenuItem), true)]
+    // ReSharper disable once UnusedType.Global
     public class ObjectMenuEditor : BaseMenuItemEditor
     {
         protected UnityEditor.Editor editor;
@@ -31,7 +33,6 @@ namespace DGames.Essentials.Editor
             DrawDashboardMessageIfCan();
             // EditorGUI.BeginChangeCheck();
             base.OnInspectorGUI();
-            
 
 
             if (editor)
@@ -48,12 +49,10 @@ namespace DGames.Essentials.Editor
 
         private void DrawDashboardMessageIfCan()
         {
-            if (_dashboardMessageAttribute is { ForInstance: true })
-            {
-                EditorGUI.HelpBox(EditorGUILayout.GetControlRect(GUILayout.MaxHeight(25), GUILayout.ExpandWidth(true)),
-                    _dashboardMessageAttribute.Message, MessageType.Info);
-                EditorGUILayout.Space();
-            }
+            if (_dashboardMessageAttribute is not { ForInstance: true }) return;
+            EditorGUI.HelpBox(EditorGUILayout.GetControlRect(GUILayout.MaxHeight(25), GUILayout.ExpandWidth(true)),
+                _dashboardMessageAttribute.Message, MessageType.Info);
+            EditorGUILayout.Space();
         }
 
         private void DoOnDrawOnTopGUI()
@@ -62,22 +61,30 @@ namespace DGames.Essentials.Editor
             if (!MenuItem.Object)
                 return;
 
+            DrawTopBar();
+            var lastColor = GUI.color;
+            GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, 0.3f);
+            EditorGUILayout.LabelField(GetTitleWithDashes("", 130));
+            GUI.color = lastColor;
+            // EditorGUILayout.Space();
+        }
+
+        private void DrawTopBar()
+        {
             EditorGUILayout.BeginHorizontal();
-            DrawRenameGroup();
+            if (_isRenaming)
+                DrawRenameGroup();
+            else
+                DrawObjectField();
 
-            if (!_isRenaming)
-            {
-                EditorGUI.BeginDisabledGroup(true);
-#pragma warning disable CS0618
-                EditorGUILayout.ObjectField(MenuItem.Object, typeof(Object));
-#pragma warning restore CS0618
-                EditorGUI.EndDisabledGroup();
-            }
-
-            if (GUILayout.Button("Select",GUILayout.MaxWidth(50)))
+            if (GUILayout.Button("Select", GUILayout.MaxWidth(50)))
             {
                 Selection.activeObject = MenuItem.Object;
             }
+
+            PresetSelector.DrawPresetButton(
+                EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, GUILayout.MaxWidth(20)),
+                new[] { MenuItem.Object });
             _showPopUp = false;
             if (MenuItem.Options.Any())
             {
@@ -85,14 +92,19 @@ namespace DGames.Essentials.Editor
                     GUILayout.MaxWidth(20));
             }
 
+
             EditorGUILayout.EndHorizontal();
-            var lastColor = GUI.color;
-            GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, 0.3f);
-            EditorGUILayout.LabelField(GetTitleWithDashes("",130));
-            GUI.color = lastColor;
-            // EditorGUILayout.Space();
         }
-        
+
+        private void DrawObjectField()
+        {
+            EditorGUI.BeginDisabledGroup(true);
+#pragma warning disable CS0618
+            EditorGUILayout.ObjectField(MenuItem.Object, typeof(Object));
+#pragma warning restore CS0618
+            EditorGUI.EndDisabledGroup();
+        }
+
         public static string GetTitleWithDashes(string title, int countPerSide = 70)
         {
             var dashes = string.Join("", Enumerable.Repeat("-", countPerSide));
@@ -102,10 +114,7 @@ namespace DGames.Essentials.Editor
 
         private void DrawRenameGroup()
         {
-            if (!_isRenaming) return;
             _renameText = EditorGUILayout.TextField(_renameText);
-       
-
             EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(_renameText) || _renameText == MenuItem.Object.name);
             if (GUILayout.Button("Rename", GUILayout.MaxWidth(60)))
             {
@@ -116,7 +125,7 @@ namespace DGames.Essentials.Editor
             }
 
             EditorGUI.EndDisabledGroup();
-            
+
             if (GUILayout.Button("Cancel", GUILayout.MaxWidth(60)))
             {
                 _renameText = "";
@@ -189,7 +198,6 @@ namespace DGames.Essentials.Editor
             _dashboardMessageAttribute = editor.target.GetType().GetCustomAttribute<DashboardMessageAttribute>();
         }
 
-     
 
         private void ContentOnNotifyChanged(Editor e)
         {

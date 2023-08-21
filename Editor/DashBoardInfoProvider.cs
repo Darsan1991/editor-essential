@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DGames.Essentials.Attributes;
+using DGames.Essentials.Infos;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -52,7 +53,7 @@ namespace DGames.Essentials.Editor
         }
 
 
-        public IEnumerable<(string, IEnumerable<IMenuItem>)> GetInfos() => _tabVsMenuItems
+        public IEnumerable<(string, IEnumerable<IMenuItem>)> GetInfos() => _tabVsMenuItems.Where(p=> !DashboardControlInfos.Default || DashboardControlInfos.Default.BlackList.All(t=>!p.Key.Contains(t)))
             .Select(tabVsMenuItem => (tabVsMenuItem.Key, tabVsMenuItem.Value.Order()))
             .Select(pair => ((string, IEnumerable<IMenuItem>))pair);
 

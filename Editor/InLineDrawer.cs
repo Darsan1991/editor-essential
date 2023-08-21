@@ -127,7 +127,7 @@ namespace DGames.Essentials.Editor
             _complexChildren.Clear();
             _complexChildren.AddRange(property.GetPropertyWithDefaultChildren().Skip(1)
                 .Where(p => !p.propertyType.IsBuildInSerializableField()).Select(p => p.name));
-            Debug.Log(string.Join(",",_complexChildren));
+            // Debug.Log(string.Join(",",_complexChildren));
             _hasCacheComplexField = true;
         }
         

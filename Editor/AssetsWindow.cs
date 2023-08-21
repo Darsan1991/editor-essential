@@ -69,6 +69,8 @@ namespace DGames.Essentials.Editor
                 {
                     var count = DrawHorizontal(assets,item=>item.name,GUI.skin.box,OnDrawItem,Mathf.Max(EditorGUIUtility.currentViewWidth - 20,40));
                     assets = assets.Skip(count).ToList();
+                    if(count==0)
+                        break;
                 }
                 
             }));

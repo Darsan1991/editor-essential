@@ -81,7 +81,7 @@ namespace DGames.Essentials.Editor
 
         private void OnTabSelectionChanged()
         {
-            Debug.Log(nameof(OnTabSelectionChanged));
+            // Debug.Log(nameof(OnTabSelectionChanged));
             Refresh();
         }
 

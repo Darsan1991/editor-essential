@@ -59,7 +59,7 @@ namespace DGames.Essentials.Editor
             var hasLabel = HasLabel(label);
             if (hasLabel)
             {
-                Debug.Log(label.text);
+                // Debug.Log(label.text);
                 position.height = EditorGUIUtility.singleLineHeight;
                 property.isExpanded = EditorGUI.Foldout(position,property.isExpanded,label);
             }
@@ -207,7 +207,7 @@ namespace DGames.Essentials.Editor
                 _fieldVsTab.Add(info.Name, tab.Path);
             }
             
-            Debug.Log(defaultTab);
+            // Debug.Log(defaultTab);
 
             _selected = Mathf.Max(_fieldVsTab.Values.Distinct().ToList().IndexOf(defaultTab)+1,0);
             

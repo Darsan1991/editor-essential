@@ -72,6 +72,14 @@ namespace DGames.Essentials.Editor
 
             DoDrawOnTop?.Invoke();
             // base.OnInspectorGUI();
+            OnContentGUI();
+            DrawOtherDefaults();
+
+            DrawFooterIfCan();
+        }
+
+        protected virtual void OnContentGUI()
+        {
             serializedObject.Update();
             var serializedProperty = serializedObject.GetIterator();
             if (serializedProperty.NextVisible(true))
@@ -99,9 +107,6 @@ namespace DGames.Essentials.Editor
 
             _layoutDrawer?.OnInspectorGUI();
             serializedObject.ApplyModifiedProperties();
-            DrawOtherDefaults();
-
-            DrawFooterIfCan();
         }
 
         private static void DrawPropertyField(SerializedProperty serializedProperty)

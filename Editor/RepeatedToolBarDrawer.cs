@@ -65,8 +65,8 @@ namespace DGames.Essentials.Editor
 
         private void CacheSelectedPathForTab(Tab tab, string newPath)
         {
-            if (!_selectedPathsCache.ContainsKey(tab) || _selectedPathsCache[tab] != newPath)
-                Debug.Log($"Tab:{tab.title} Path:{newPath}");
+            // if (!_selectedPathsCache.ContainsKey(tab) || _selectedPathsCache[tab] != newPath)
+            //     Debug.Log($"Tab:{tab.title} Path:{newPath}");
 
             if (!_selectedPathsCache.ContainsKey(tab))
             {

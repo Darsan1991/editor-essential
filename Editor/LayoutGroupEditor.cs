@@ -50,11 +50,7 @@ namespace DGames.Essentials.Editor
             foreach (var (attribute, field) in rootFieldVsAttributes.Select(pair =>
                              pair.Value.Where(t => t.GetType().IsAssignableFrom((Type)GroupElement.LayoutType))
                                  .Select(attribute => (attribute, pair.Key))).SelectMany(ts => ts)
-                         .Where(ts=>
-                         {
-                             Debug.Log($"{ts.attribute.FullGroupPath} ----- {GroupElement.Path}");
-                             return ts.attribute.FullGroupPath == GroupElement.Path;
-                         })
+                         .Where(ts=> ts.attribute.FullGroupPath == GroupElement.Path)
                          .Where(ts => !currentAttributeVsFields.ContainsKey(ts.attribute)))
             {
                 

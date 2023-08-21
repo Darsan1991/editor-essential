@@ -149,7 +149,7 @@ namespace DGames.Essentials.Editor
             }
 
             DestroyTempObjectEditor();
-            Debug.Log(nameof(OnExit));
+            // Debug.Log(nameof(OnExit));
         }
 
         private void DestroyTempObjectEditor()

@@ -49,12 +49,6 @@ namespace DGames.Essentials.Editor
         {
         }
 
-        public override void OnEnter(IWindow window)
-        {
-            base.OnEnter(window);
-            Debug.Log(nameof(OnEnter));
-        }
-
         private void ShowPopup()
         {
             var menu = new GenericMenu();
