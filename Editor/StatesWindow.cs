@@ -315,7 +315,7 @@ namespace DGames.Essentials.Editor
                 }
             }
 
-            if (!Event.current.alt)
+         if (!Event.current.alt && !Application.isPlaying)
                 EditorSceneManager.MarkAllScenesDirty();
         }
 
