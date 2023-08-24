@@ -33,8 +33,8 @@ namespace DGames.Essentials.Editor
                 EditorGUIUtility.IconContent("AnimatorStateTransition Icon").image
             );
 
-            assetsWindow.Refresh();
             assetsWindow.Show();
+            assetsWindow.Refresh();
         }
 
         [MenuItem("Window/Add Tab/States")]
@@ -141,11 +141,6 @@ namespace DGames.Essentials.Editor
                     EditorGUILayout.EndScrollView();
                 HandleShortCuts();
 
-                if (_needToRefresh)
-                {
-                    _needToRefresh = false;
-                    Refresh();
-                }
 
 
             }));
@@ -160,6 +155,11 @@ namespace DGames.Essentials.Editor
             }
             _callAtEndOfDrawing.Clear();
 
+            if (_needToRefresh)
+            {
+                _needToRefresh = false;
+                Refresh();
+            }
         }
 
         private void UpdateSceneEditorInfos()

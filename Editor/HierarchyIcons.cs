@@ -9,12 +9,10 @@ namespace DGames.Essentials.Editor
     [InitializeOnLoad]
     public static class HierarchyIcons
     {
-        private static readonly HierarchyIconInfos _hierarchyIconInfos;
 
         static HierarchyIcons ()
         {
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyItemOnGUI;
-            _hierarchyIconInfos = HierarchyIconInfos.Default;
         }
 
         private static void HierarchyItemOnGUI (int instanceID, Rect selectionRect)
@@ -38,7 +36,7 @@ namespace DGames.Essentials.Editor
             return behaviours.Where(b =>
             {
                 var fullName = b.GetType().FullName;
-                return _hierarchyIconInfos.IgnoreTypes.All(name => fullName == null || !fullName.Contains(name));
+                return  HierarchyIconInfos.Default.IgnoreTypes.All(name => fullName == null || !fullName.Contains(name));
             });
         }
 

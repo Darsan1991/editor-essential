@@ -125,7 +125,6 @@ namespace DGames.Essentials.Editor
             paths.RemoveAll(p => p == "Array" || p.StartsWith("data["));
 
             paths = paths.SkipLast(skips).ToList();
-
             for (var i = 0; i < paths.Count; i++)
             {
                 var p = paths[i];
@@ -138,19 +137,25 @@ namespace DGames.Essentials.Editor
                 // Debug.Log(parentType + ":" + p + ":" + fieldInfo);
 
                 if (fieldInfo == null)
+                {
                     return null;
+                }
 
-                if (fieldInfo.FieldType.IsGenericType && skipGenetic)
+
+                if (fieldInfo.FieldType.IsGenericType && skipGenetic && paths.Count - 2 <= i )
                 {
                     parentType = fieldInfo.FieldType.GetGenericArguments()[0];
                     i++;
+
                 }
                 else
                     parentType = fieldInfo.FieldType;
+
             }
 
             return parentType;
         }
+
 
         public static FieldInfo GetFieldInfo(this SerializedProperty property)
         {

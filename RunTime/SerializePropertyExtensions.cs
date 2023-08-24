@@ -154,7 +154,6 @@ namespace DGames.Essentials.EditorHelpers
             }
         }
 
-        // ReSharper disable once FlagArgument
         public static Type GetValueType(this SerializedProperty property, int skips = 0, bool skipGenetic = true)
         {
             // Debug.Log(property.propertyPath);
@@ -164,7 +163,6 @@ namespace DGames.Essentials.EditorHelpers
             paths.RemoveAll(p => p == "Array" || p.StartsWith("data["));
 
             paths = paths.SkipLast(skips).ToList();
-
             for (var i = 0; i < paths.Count; i++)
             {
                 var p = paths[i];
@@ -177,19 +175,25 @@ namespace DGames.Essentials.EditorHelpers
                 // Debug.Log(parentType + ":" + p + ":" + fieldInfo);
 
                 if (fieldInfo == null)
+                {
                     return null;
+                }
 
-                if (fieldInfo.FieldType.IsGenericType && skipGenetic)
+
+                if (fieldInfo.FieldType.IsGenericType && skipGenetic && paths.Count - 2 <= i )
                 {
                     parentType = fieldInfo.FieldType.GetGenericArguments()[0];
                     i++;
+
                 }
                 else
                     parentType = fieldInfo.FieldType;
+
             }
 
             return parentType;
         }
+
 
         public static FieldInfo GetFieldInfo(this SerializedProperty property)
         {
