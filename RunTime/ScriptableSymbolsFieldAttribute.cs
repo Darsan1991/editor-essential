@@ -225,3 +225,7 @@ namespace DGames.Essentials.Attributes
     }
 #endif
 }
+
+namespace DGames.Essentials.Unity
+{
+}
