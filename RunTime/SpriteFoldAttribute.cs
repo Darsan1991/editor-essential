@@ -21,12 +21,15 @@ public partial class SpriteFoldAttribute: SimpleFoldAttribute
         _height = height <=0?100:height;
     }
 
+#if UNITY_EDITOR
+    
     public override bool IsShow(SerializedProperty property)
     {
         property = string.IsNullOrEmpty(PropertyPath) ? property : property.FindPropertyRelative(PropertyPath);
 
         return base.IsShow(property) && property.type.Contains(nameof(Sprite)) && (string.IsNullOrEmpty(PropertyPath) || MinIfPropertyPathWidth<= EditorGUIUtility.currentViewWidth);
     }
+#endif
 }
 
 #if UNITY_EDITOR

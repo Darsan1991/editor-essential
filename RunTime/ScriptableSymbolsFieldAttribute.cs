@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using DGames.Essentials.Unity;
 using UnityEngine;
-using BuildTargetGroup = UnityEditor.BuildTargetGroup;
 #if UNITY_EDITOR
+using BuildTargetGroup = UnityEditor.BuildTargetGroup;
 using UnityEditor;
 #endif
 
@@ -224,8 +224,4 @@ namespace DGames.Essentials.Attributes
         }
     }
 #endif
-}
-
-namespace DGames.Essentials.Unity
-{
 }
