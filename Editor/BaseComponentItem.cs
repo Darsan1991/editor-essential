@@ -15,8 +15,9 @@ namespace DGames.Essentials.Editor
         public ITreeItem Parent { get; set; }
         public IEnumerable<ITreeItem> Children => _children;
         public abstract string Name { get; }
-        public string FullName => string.Join("", Enumerable.Range(0, ParentCount).Select(_ => "      ")) + Name;
+        public string FullName => string.Join("", Enumerable.Range(0, ParentCount).Select(_ => "  ")) + Name;
 
+        public Texture2D Icon { get; protected set; }
         public int Order { get; set; }
 
         public void AddChildren(ITreeItem item)
@@ -70,6 +71,7 @@ namespace DGames.Essentials.Editor
         {
             Object = obj;
             _options = (options ?? Array.Empty<Option>()).ToArray();
+            Icon = EditorGUIUtility.GetIconForObject(obj);
             _name =  name;
         }
 
@@ -126,6 +128,8 @@ namespace DGames.Essentials.Editor
 
         public string FullName { get; } = "";
         public ITreeItem Parent { get; set; }
+
+        public Texture2D Icon { get; } = null;
         public IEnumerable<ITreeItem> Children => _children;
 
         public void AddChildren(ITreeItem item)

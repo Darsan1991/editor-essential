@@ -50,8 +50,18 @@ namespace DGames.Essentials.Editor
 
         protected virtual void OnBindItem(VisualElement element, int index)
         {
-            var label = (Label)element.Children().First();
-            label.text = ((IList<IMenuItem>)leftPane.itemsSource)[index].FullName;
+            var paddingLabel = (Label)element.Children().ElementAt(0);
+
+            var image = (Image)element.Children().ElementAt(1);
+            var label = (Label)element.Children().ElementAt(2);
+
+            var menuItem = ((IList<IMenuItem>)leftPane.itemsSource)[index];
+            paddingLabel.text = new string(menuItem.FullName.TakeWhile(c => c == ' ').Select(_=> 'O').ToArray());
+            label.text = menuItem.FullName.TrimStart();
+            image.image = menuItem.Icon;
+
+            image.visible = menuItem.Icon != null;
+            // label.style.paddingLeft = image.visible ? 20 : 5;
         }
 
         protected virtual void LeftPaneOnItemsSourceChanged()
@@ -75,13 +85,27 @@ namespace DGames.Essentials.Editor
                     flexGrow = 1f,
                     flexShrink = 0f,
                     flexBasis = 0f,
-                    paddingBottom = 5,
+                    // paddingBottom = 5,
                     borderBottomWidth = 1,
+                    alignItems = new StyleEnum<Align>(Align.Center),
                     borderBottomColor = new StyleColor(new Color(0.15f, 0.15f, 0.15f))
                 }
             };
             box.Add(new Label
-                { style = { unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleLeft), paddingLeft = 20, } });
+                { style =
+                {
+                    unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleLeft),//backgroundColor = Color.red,
+                    color = Color.clear
+                } });
+            box.Add(new Image
+            {
+                style = { minWidth = 25,maxWidth = 25,height = 20,paddingLeft = 10}
+            });
+            box.Add(new Label
+                { style =
+                {
+                    unityTextAlign = new StyleEnum<TextAnchor>(TextAnchor.MiddleLeft),paddingLeft = 5
+                } });
 
 
             return box;

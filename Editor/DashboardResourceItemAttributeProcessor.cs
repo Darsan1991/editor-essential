@@ -28,7 +28,7 @@ namespace DGames.Essentials.Editor
                 select new MenuInfo()
                 {
                     MenuItem = treeAttribute != null
-                        ? ObjectMenuItem.CreateTreeBased(obj, treeAttribute.ChildrenName,rootName:attribute.DisplayName)
+                        ? ObjectMenuItem.CreateTreeBased(obj, treeAttribute.ChildrenName,rootName:attribute.DisplayName.TrimStart())
                         : new ObjectMenuItem(obj,name:attribute.DisplayName),
                     Path = attribute.Path,
                     TabPath = attribute.TabPath
