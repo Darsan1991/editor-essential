@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using DGames.Essentials.Attributes;
 using UnityEngine;
 
 namespace DGames.Essentials.Unity
 {
+    [DashboardResourceItem(tabPath:"System/Editor",displayName:"Hierarchy Icon Settings")]
     public partial class HierarchyIconSettings:ScriptableObject
     {
         [SerializeField] private bool _enable = true;

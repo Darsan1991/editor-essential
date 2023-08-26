@@ -116,7 +116,7 @@ namespace DGames.Essentials.Unity
                 uid = gameObject.AddComponent<UID>();
             }
 
-            var componentInfos = gameObject.GetComponentsInChildren<Behaviour>().Select(b => new ComponentInfo
+            var componentInfos = gameObject.GetComponentsInChildren<Behaviour>().Where(b=>b).Select(b => new ComponentInfo
             {
                 enable = b.enabled,
                 name = b.GetType().FullName
@@ -139,7 +139,7 @@ namespace DGames.Essentials.Unity
 
             gameObject.SetActive(active);
 
-            foreach (var behaviour in gameObject.GetComponentsInChildren<Behaviour>())
+            foreach (var behaviour in gameObject.GetComponentsInChildren<Behaviour>().Where(b=>b))
             {
                 var info = (componentInfos ?? Array.Empty<ComponentInfo>()).FirstOrDefault(c =>
                     c.name == behaviour.GetType().FullName);

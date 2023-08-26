@@ -21,7 +21,7 @@ namespace DGames.Essentials.Editor
                 return;
             if (EditorUtility.InstanceIDToObject(instanceID) is not GameObject go) return;
 
-            var behaviourAndIcons = FilterTypes(go.GetComponents<MonoBehaviour>())
+            var behaviourAndIcons = FilterTypes(go.GetComponents<MonoBehaviour>().Where(m=>m))
                 .Select(b => (b, EditorGUIUtility.GetIconForObject(b)))
                 .Where(t => t.Item2).ToArray();
 
@@ -48,7 +48,7 @@ namespace DGames.Essentials.Editor
         {
             var childBehaviours =
                 HierarchyIconSettings.Default.DrawChildrenIcons
-                    ? FilterTypes(go.GetComponentsInChildren<MonoBehaviour>().Where(m => m.gameObject != go))
+                    ? FilterTypes(go.GetComponentsInChildren<MonoBehaviour>().Where(m => m && m.gameObject != go))
                         .Where(m => EditorGUIUtility.GetIconForObject(m)).ToArray()
                     : Array.Empty<MonoBehaviour>();
             var childGroups = childBehaviours.GroupBy(c => c.GetType()).ToArray();

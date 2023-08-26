@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace DGames.Essentials.Editor
 {
-    [CustomEditor(typeof(Object), true)]
+   [CustomEditor(typeof(Object), true)]
     [CanEditMultipleObjects]
     public class Editor : UnityEditor.Editor
     {
@@ -27,6 +27,8 @@ namespace DGames.Essentials.Editor
 
         private void OnEnable()
         {
+            if (target == null || !serializedObject.targetObject)
+                return;
             _buttonsDrawer = new ButtonsDrawer(target);
 
             var type = target.GetType();
@@ -56,6 +58,8 @@ namespace DGames.Essentials.Editor
 
         public override void OnInspectorGUI()
         {
+            if (target == null || !serializedObject.targetObject)
+                return;
             if (_typeMessage != null && !string.IsNullOrEmpty(_typeMessage.Message))
             {
                 EditorGUI.HelpBox(EditorGUILayout.GetControlRect(GUILayout.MaxHeight(25), GUILayout.ExpandWidth(true)),

@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using DGames.Essentials.Attributes;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -8,6 +9,8 @@ using UnityEditor;
 
 namespace DGames.Essentials.Unity
 {
+    [AddComponentMenu("Identifier/UID")]
+    [HideScriptField]
     [ExecuteInEditMode]
     public class UID : MonoBehaviour
     {

@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DGames.Essentials.Attributes;
+using DGames.Essentials.Editor;
 using UnityEngine;
 
 namespace DGames.Essentials.Infos
 {
+    [DashboardResourceItem(tabPath:"System/Editor",displayName:"Dashboard Control Infos")]
     public partial class DashboardControlInfos:ScriptableObject
     {
         [SerializeField] private bool _development;
@@ -37,4 +39,6 @@ namespace DGames.Essentials.Infos
         }
 #endif
     }
+    
+
 }
