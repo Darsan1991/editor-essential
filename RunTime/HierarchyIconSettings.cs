@@ -9,7 +9,7 @@ namespace DGames.Essentials.Unity
     {
         [SerializeField] private bool _enable = true;
         [SerializeField] private bool _drawChildrenIcons = true;
-        [SerializeField] private List<string> _ignoreTypes = new();
+        [NoLabel][SerializeField] private List<string> _ignoreTypes = new();
 
 
         public bool DrawChildrenIcons => _drawChildrenIcons;

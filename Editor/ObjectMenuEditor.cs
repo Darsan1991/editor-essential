@@ -82,6 +82,18 @@ namespace DGames.Essentials.Editor
                 Selection.activeObject = MenuItem.Object;
             }
 
+            if (MenuItem.Object is IToolButtons tooButtons)
+            {
+                foreach (var toolButton in tooButtons.ToolButtons)
+                {
+                    if (GUILayout.Button(toolButton.name, GUILayout.MaxWidth(50)))
+                    {
+                        toolButton.action();
+                    }
+
+                }
+            }
+
             PresetSelector.DrawPresetButton(
                 EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, GUILayout.MaxWidth(20)),
                 new[] { MenuItem.Object });

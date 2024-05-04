@@ -22,6 +22,7 @@ namespace DGames.Essentials.Editor
         private bool _needToRefresh;
 
         private readonly List<Action> _callAtEndOfDrawing = new();
+        private readonly List<(Action,int)> _delayActions = new();
 
         [MenuItem("Window/States")]
         // ReSharper disable once TooManyArguments
@@ -36,6 +37,8 @@ namespace DGames.Essentials.Editor
             assetsWindow.Show();
             assetsWindow.Refresh();
         }
+        
+        
 
         [MenuItem("Window/Add Tab/States")]
         // ReSharper disable once TooManyArguments
@@ -107,15 +110,16 @@ namespace DGames.Essentials.Editor
             Refresh();
         }
 
-        private void HandleShortCuts()
+
+        [MenuItem("MyGames/CaptureState &s")]
+        private static void HandleShortCuts()
         {
-            // if(Event.current!=null)
-            // Debug.Log(Event.current);
-            if (Event.current is { keyCode: KeyCode.C, command: true, shift: true, type: EventType.KeyDown })
-            {
-                OnClickAdd(_editInfos.First());
-                Event.current.Use();
-            }
+            Selection.activeObject = null;
+            
+            var name = EditorInputDialog.Show( "Question", "Please enter your name", "" );
+
+            CreateNewState(name, AssetDatabase.GUIDFromAssetPath(SceneManager.GetActiveScene().path).ToString());
+
         }
 
         public void Refresh()
@@ -139,26 +143,42 @@ namespace DGames.Essentials.Editor
                 DrawContent(stateInfos);
                 if (scroll)
                     EditorGUILayout.EndScrollView();
-                HandleShortCuts();
-
-
-
+                // HandleShortCuts();
             }));
         }
 
         private void OnGUI()
         {
-            
             foreach (var action in _callAtEndOfDrawing)
             {
                 action();
             }
+
             _callAtEndOfDrawing.Clear();
+            
+            HandleDelayAction();
 
             if (_needToRefresh)
             {
                 _needToRefresh = false;
                 Refresh();
+            }
+            
+            
+        }
+
+        private void HandleDelayAction()
+        {
+            for (var i = 0; i < _delayActions.Count; i++)
+            {
+                _delayActions[i] = (_delayActions[i].Item1, _delayActions[i].Item2 - 1);
+                // Debug.Log(_delayActions[i].Item2);
+                if (_delayActions[i].Item2 <= 0)
+                {
+                    _delayActions[i].Item1();
+                    _delayActions.RemoveAt(i);
+                    --i;
+                }
             }
         }
 
@@ -261,11 +281,16 @@ namespace DGames.Essentials.Editor
             EditorGUI.EndDisabledGroup();
         }
 
-        private static void OnClickAdd(SceneEditInfo sceneInfo)
+        private void OnClickAdd(SceneEditInfo sceneInfo)
         {
             sceneInfo.Editing = true;
             sceneInfo.EditingStatePreviousName = null;
-            EditorGUI.FocusTextInControl(sceneInfo.Scene + "Edit");
+            Repaint();
+            _delayActions.Add((() =>
+            {
+                EditorGUI.FocusTextInControl(sceneInfo.Scene + "Edit");
+                Focus();
+            },4));
         }
 
         private void DrawStateInfoItem(SceneEditInfo sceneInfo, StateInfo stateInfo)
@@ -274,7 +299,6 @@ namespace DGames.Essentials.Editor
                     GUILayout.Width(GUI.skin.box.CalcSize(new GUIContent(stateInfo.name)).x + 4),
                     GUILayout.Height(EditorGUIUtility.singleLineHeight)))
             {
-                
                 OnClickStateButton(sceneInfo, stateInfo);
             }
 
@@ -315,7 +339,7 @@ namespace DGames.Essentials.Editor
                 }
             }
 
-         if (!Event.current.alt && !Application.isPlaying)
+            if (!Event.current.alt && !Application.isPlaying)
                 EditorSceneManager.MarkAllScenesDirty();
         }
 
@@ -359,7 +383,6 @@ namespace DGames.Essentials.Editor
         {
             EditorGUILayout.Space();
             EditorGUILayout.BeginHorizontal();
-
             GUI.SetNextControlName(scene.Scene + "Edit");
             scene.EditingText = EditorGUILayout.TextField(scene.EditingText);
 
@@ -406,17 +429,7 @@ namespace DGames.Essentials.Editor
         {
             if (string.IsNullOrEmpty(scene.EditingStatePreviousName))
             {
-                var path = AssetDatabase.GUIDToAssetPath(scene.Scene);
-                var stateInfo = new StateInfo
-                {
-                    name =
-                        scene.EditingText,
-                    GameObjectInfos = FindObjectsOfType<Transform>(true).Where(t => t.gameObject.scene.path == path)
-                        .Select(t => GameObjectStateInfo.CreateInfo(t.gameObject)).ToArray(),
-                    sceneInfo = SceneInfo.Create(SceneView.lastActiveSceneView)
-                };
-
-                StateInfos.Default.AddState(scene.Scene, stateInfo);
+                CreateNewState(scene.EditingText,scene.Scene);
             }
             else
             {
@@ -429,6 +442,21 @@ namespace DGames.Essentials.Editor
             scene.EditingText = null;
             scene.Editing = false;
             MarkForRefresh();
+        }
+
+        private static void CreateNewState(string name,string scene)
+        {
+            var path = AssetDatabase.GUIDToAssetPath(scene);
+            var stateInfo = new StateInfo
+            {
+                name =
+                    name,
+                GameObjectInfos = FindObjectsOfType<Transform>(true).Where(t => t.gameObject.scene.path == path)
+                    .Select(t => GameObjectStateInfo.CreateInfo(t.gameObject)).ToArray(),
+                sceneInfo = SceneInfo.Create(SceneView.lastActiveSceneView)
+            };
+
+            StateInfos.Default.AddState(scene, stateInfo);
         }
 
 

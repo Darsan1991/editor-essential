@@ -35,18 +35,18 @@ namespace DGames.Essentials.Editor
 
     private UnityEditor.Editor _editor;
 
-    public static void Open<TWindow>(T item,string title=null) where TWindow:ScriptableObjectWindow<T>
+    public static void Open<TWindow>(T item,string title=null,string icon=null) where TWindow:ScriptableObjectWindow<T>
     {
       var window = GetWindow<TWindow>();
       window.Object = item;
-      window.titleContent =  new GUIContent(!string.IsNullOrEmpty(title)? title : item ? item.name : typeof(T).Name);
+      window.titleContent =  new GUIContent(!string.IsNullOrEmpty(title)? title : item ? item.name : typeof(T).Name,!string.IsNullOrEmpty(icon) ? EditorGUIUtility.IconContent(icon)?.image:null);
       window.minSize = new Vector2(450, 300);
       window.Show();
     }
         
-    public static void Open<TWindow>(string title=null) where TWindow : ScriptableObjectWindow<T>
+    public static void Open<TWindow>(string title=null,string icon=null) where TWindow : ScriptableObjectWindow<T>
     {
-      Open<TWindow>(Resources.Load<T>(typeof(T).Name),title);
+      Open<TWindow>(Resources.Load<T>(typeof(T).Name),title,icon);
     }
 
     private void OnGUI()

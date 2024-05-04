@@ -1,19 +1,11 @@
 using System;
 using System.Reflection;
-using DGames.Essentials.Attributes;
-using UnityEngine;
-
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
+using UnityEngine;
 
 namespace DGames.Essentials.Unity
 {
-    [AddComponentMenu("Identifier/UID")]
-    [HideScriptField]
-    [ExecuteInEditMode]
-    [DisallowMultipleComponent]
-    public class UID : MonoBehaviour
+    public class UIDHideTest : MonoBehaviour
     {
         [HideInInspector][SerializeField] private string _id;
 
@@ -32,13 +24,12 @@ namespace DGames.Essentials.Unity
 
         private void Awake()
         {
-            
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if(PrefabUtility.IsPartOfPrefabAsset(this))
                 return;
             
             
-            #endif
+#endif
             
             if(  GetInstanceID()<0   && !Application.isPlaying && GetFileLocalIdentifier() == 0)
             {
@@ -54,7 +45,7 @@ namespace DGames.Essentials.Unity
             var inspectorModeInfo =
                 typeof(SerializedObject).GetProperty("inspectorMode", BindingFlags.NonPublic | BindingFlags.Instance);
  
-           using var serializedObject = new SerializedObject(this);
+            using var serializedObject = new SerializedObject(this);
             inspectorModeInfo!.SetValue(serializedObject, InspectorMode.Debug, null);
  
             var localIdProp =
@@ -72,13 +63,22 @@ namespace DGames.Essentials.Unity
             GenerateNewId();
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                hideFlags = hideFlags == HideFlags.HideInInspector  ? HideFlags.None: HideFlags.HideInInspector;
+
+            }
+        }
+
         private void GenerateNewId()
         {
             _id = Guid.NewGuid().ToString();
             
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             EditorUtility.SetDirty(this);
-            #endif
+#endif
         }
 
         [ContextMenu(nameof(PrintId))]

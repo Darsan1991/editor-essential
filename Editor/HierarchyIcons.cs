@@ -7,13 +7,19 @@ using UnityEngine;
 
 namespace DGames.Essentials.Editor
 {
+    
+    
     [InitializeOnLoad]
     public static class HierarchyIcons
     {
+        private static readonly List<IObjectIconsProvider> _iconProviders = new();
+
         static HierarchyIcons()
         {
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyItemOnGUI;
         }
+
+        public static void RegisterIconProvider(IObjectIconsProvider provider) => _iconProviders.Add(provider);
 
         private static void HierarchyItemOnGUI(int instanceID, Rect selectionRect)
         {
@@ -27,19 +33,32 @@ namespace DGames.Essentials.Editor
 
             var childGroups = GetChildrenBehaviourGroups(go);
 
+            var otherIcons = _iconProviders.Select(p => p.GetIcons(go)).SelectMany(icons => icons).ToArray();
+
             var rects = GetRects(
-                behaviourAndIcons.Select(_ => 16f).Concat(childGroups.Any() ? new[] { 16f } : Array.Empty<float>())
-                    .Concat(childGroups.Select(g => g.Count() >= 10 ? 28f : 20f)).ToArray(), selectionRect,
+                otherIcons.Select(i=> 16f)
+                    .Concat(behaviourAndIcons.Select(_ => 16f))
+                    .Concat(childGroups.Any() ? new[] { 16f } : Array.Empty<float>())
+                    .Concat(childGroups.Select(g => g.Count() >= 10 ? 28f : 20f))
+                    .ToArray(),
+                selectionRect,
                 EditorStyles.label.CalcSize(new GUIContent(go.name)).x + 20).ToArray();
 
-            DrawOwnIcons(behaviourAndIcons, rects);
+            DrawOtherIcons(go,otherIcons,rects.Take(otherIcons.Length).ToArray());
+            var startIndex = otherIcons.Length;
 
-            if (rects.Length > behaviourAndIcons.Length)
-                GUI.Label(rects[behaviourAndIcons.Length], "|", EditorStyles.centeredGreyMiniLabel);
+            DrawOwnIcons(behaviourAndIcons, rects.Skip(startIndex).Take(behaviourAndIcons.Length).ToArray());
+
+            startIndex += behaviourAndIcons.Length;
+
+
+            if (rects.Length > startIndex)
+                GUI.Label(rects[startIndex], "|", EditorStyles.centeredGreyMiniLabel);
+            
 
             for (var i = 0; i < childGroups.Length; i++)
             {
-                var rect = rects[i + behaviourAndIcons.Length + 1];
+                var rect = rects[i + startIndex + 1];
                 DrawMiniIconGroup(rect, childGroups, i);
             }
         }
@@ -68,6 +87,20 @@ namespace DGames.Essentials.Editor
                     enabled: true, gameObject: { activeSelf: true }
                 }));
                 GUI.Label(rect, behaviourAndIcons[i].Item2);
+                EditorGUI.EndDisabledGroup();
+            }
+        }
+        
+        private static void DrawOtherIcons(GameObject go,IReadOnlyList<Texture> icons, IReadOnlyList<Rect> rects)
+        {
+            for (var i = 0; i < icons.Count; i++)
+            {
+                var rect = rects[i];
+                var height = 13f;
+                rect.y += (rect.height - height) / 2;
+                rect.height = height;
+                EditorGUI.BeginDisabledGroup(!go.activeSelf);
+                GUI.Label(rect, icons[i]);
                 EditorGUI.EndDisabledGroup();
             }
         }
