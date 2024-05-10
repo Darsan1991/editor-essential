@@ -177,6 +177,7 @@ namespace DGames.Essentials.Unity
                 this.name = name;
             }
 
+#if UNITY_EDITOR
             public abstract bool CanAdd(Object obj);
 
             public abstract void Add(Object obj);
@@ -186,6 +187,7 @@ namespace DGames.Essentials.Unity
 
             public abstract bool Contains(Object obj);
             
+#endif
             
         }
 
