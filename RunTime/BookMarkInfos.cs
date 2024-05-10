@@ -55,6 +55,7 @@ namespace DGames.Essentials.Unity
 
         public void AddBookMark(Object obj)
         {
+#if UNITY_EDITOR
             if (ContainsBookMark(obj))
             {
                 return;
@@ -71,43 +72,54 @@ namespace DGames.Essentials.Unity
             }
 
             MarkDirtyIfEditor();
+#endif
         }
 
         public void RemoveBookMark(string id)
         {
+#if UNITY_EDITOR
             var section = Sections.FirstOrDefault(section => section.Any(info => info.Id == id));
 
             section?.Remove(id);
 
             MarkDirtyIfEditor();
+#endif
         }
         
         public void RemoveBookMark(Object obj)
         {
+#if UNITY_EDITOR
             var section = Sections.FirstOrDefault(section => section.Contains(obj));
 
             section?.Remove(obj);
 
             MarkDirtyIfEditor();
+#endif
         }
 
         
         public void UpdateBookMark(string id)
         {
+#if UNITY_EDITOR
             var info = Sections.SelectMany(s=>s).FirstOrDefault(info =>info.Id == id);
 
             info?.Update();
 
             MarkDirtyIfEditor();
+#endif
         }
 
         public bool ContainsBookMark(Object obj)
         {
+#if UNITY_EDITOR
+
             return Sections.Any(s => s.Contains(obj));
+#endif
         }
 
         public void AddInSection(Object obj, Section section)
         {
+#if UNITY_EDITOR
             if (!section.CanAdd(obj))
             {
                 return;
@@ -116,6 +128,7 @@ namespace DGames.Essentials.Unity
             section.Add(obj);
 
             MarkDirtyIfEditor();
+#endif
         }
         
     
