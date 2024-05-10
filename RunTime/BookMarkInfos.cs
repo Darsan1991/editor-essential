@@ -115,6 +115,8 @@ namespace DGames.Essentials.Unity
 
             return Sections.Any(s => s.Contains(obj));
 #endif
+
+            return false;
         }
 
         public void AddInSection(Object obj, Section section)
@@ -379,7 +381,13 @@ namespace DGames.Essentials.Unity
             
             public static string GetId(Object obj)
             {
+
+#if UNITY_EDITOR
+
                 return AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(obj)).ToString();
+#endif
+
+                return "";
             }
 
             public override void Action()
@@ -473,6 +481,7 @@ namespace DGames.Essentials.Unity
         }
     }
 
+ #if UNITY_EDITOR
     public partial class BookMarkInfos : IObjectIconsProvider
     {
         public IEnumerable<Texture> GetIcons(Object obj)
@@ -489,6 +498,7 @@ namespace DGames.Essentials.Unity
         
     }
 
+    #endif
     public interface IObjectIconsProvider
     {
         IEnumerable<Texture> GetIcons(Object obj);
