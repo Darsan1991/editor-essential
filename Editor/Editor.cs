@@ -118,7 +118,8 @@ namespace DGames.Essentials.Editor
                 EditorGUI.BeginChangeCheck();
                 foreach (var fieldInfo in _serializeInterfaces)
                 {
-                    var value = EditorGUILayout.ObjectField(char.ToUpper(fieldInfo.Name.First())+ fieldInfo.Name[1..],fieldInfo.GetValue(target) as Object, fieldInfo.FieldType, true);
+                    var fName = fieldInfo.Name.Replace("_","");
+                    var value = EditorGUILayout.ObjectField(char.ToUpper(fName.First())+ fName[1..],fieldInfo.GetValue(target) as Object, fieldInfo.FieldType, true);
 
                     if ((Object)fieldInfo.GetValue(target) != value)
                     {
