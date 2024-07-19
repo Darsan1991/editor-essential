@@ -24,11 +24,11 @@ namespace DGames.Essentials.Editor
         private TypeMessageAttribute _typeMessage;
         private HideScriptField _hideScriptField;
         private LayoutDrawer _layoutDrawer;
-        private FieldInfo[] _serializeInterfaces;
+        // private FieldInfo[] _serializeInterfaces;
 
         public Action DoDrawOnTop { get; set; }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             if (target == null || !serializedObject.targetObject)
                 return;
@@ -40,7 +40,7 @@ namespace DGames.Essentials.Editor
             _objectMessage = type.GetCustomAttribute<ObjectMessageAttribute>();
             _typeMessage = type.GetCustomAttribute<TypeMessageAttribute>();
             _hideScriptField = type.GetCustomAttribute<HideScriptField>();
-            _serializeInterfaces = SerializeInterfaceField.GetAllSerializedInterfaceFields(type).ToArray();
+            // _serializeInterfaces = SerializeInterfaceField.GetAllSerializedInterfaceFields(type).ToArray();
             SerializedObject so = null;
             try
             {
@@ -113,27 +113,32 @@ namespace DGames.Essentials.Editor
 
             _layoutDrawer?.OnInspectorGUI();
             
-            if (_serializeInterfaces != null)
-            {
-                EditorGUI.BeginChangeCheck();
-                foreach (var fieldInfo in _serializeInterfaces)
-                {
-                    var fName = fieldInfo.Name.Replace("_","");
-                    var value = EditorGUILayout.ObjectField(char.ToUpper(fName.First())+ fName[1..],fieldInfo.GetValue(target) as Object, fieldInfo.FieldType, true);
-
-                    if ((Object)fieldInfo.GetValue(target) != value)
-                    {
-                        fieldInfo.SetValue(target, value);
-                    }
-                }
-                // if (EditorGUI.EndChangeCheck())
-                // {
-                //     var property = serializedObject.FindProperty("fieldVsObjects");
-                //     property.arraySize +=1 ;
-                // }
-            }
+            OnDrawEndOfContent();
             
             serializedObject.ApplyModifiedProperties();
+        }
+
+        protected virtual void OnDrawEndOfContent()
+        {
+            // if (_serializeInterfaces != null)
+            // {
+            //     EditorGUI.BeginChangeCheck();
+            //     foreach (var fieldInfo in _serializeInterfaces)
+            //     {
+            //         var fName = fieldInfo.Name.Replace("_","");
+            //         var value = EditorGUILayout.ObjectField(char.ToUpper(fName.First())+ fName[1..],fieldInfo.GetValue(target) as Object, fieldInfo.FieldType, true);
+            //
+            //         if ((Object)fieldInfo.GetValue(target) != value)
+            //         {
+            //             fieldInfo.SetValue(target, value);
+            //         }
+            //     }
+            //     // if (EditorGUI.EndChangeCheck())
+            //     // {
+            //     //     var property = serializedObject.FindProperty("fieldVsObjects");
+            //     //     property.arraySize +=1 ;
+            //     // }
+            // }
         }
 
         private static void DrawPropertyField(SerializedProperty serializedProperty)
