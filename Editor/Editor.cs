@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DGames.Essentials.Attributes;
+using DGames.Essentials.Base;
 using UnityEditor;
 using UnityEngine;
 using MessageType = UnityEditor.MessageType;
@@ -22,6 +24,7 @@ namespace DGames.Essentials.Editor
         private TypeMessageAttribute _typeMessage;
         private HideScriptField _hideScriptField;
         private LayoutDrawer _layoutDrawer;
+        private FieldInfo[] _serializeInterfaces;
 
         public Action DoDrawOnTop { get; set; }
 
@@ -37,6 +40,7 @@ namespace DGames.Essentials.Editor
             _objectMessage = type.GetCustomAttribute<ObjectMessageAttribute>();
             _typeMessage = type.GetCustomAttribute<TypeMessageAttribute>();
             _hideScriptField = type.GetCustomAttribute<HideScriptField>();
+            _serializeInterfaces = SerializeInterfaceField.GetAllSerializedInterfaceFields(type).ToArray();
             SerializedObject so = null;
             try
             {
@@ -108,6 +112,26 @@ namespace DGames.Essentials.Editor
             }
 
             _layoutDrawer?.OnInspectorGUI();
+            
+            if (_serializeInterfaces != null)
+            {
+                EditorGUI.BeginChangeCheck();
+                foreach (var fieldInfo in _serializeInterfaces)
+                {
+                    var value = EditorGUILayout.ObjectField(char.ToUpper(fieldInfo.Name.First())+ fieldInfo.Name[1..],fieldInfo.GetValue(target) as Object, fieldInfo.FieldType, true);
+
+                    if ((Object)fieldInfo.GetValue(target) != value)
+                    {
+                        fieldInfo.SetValue(target, value);
+                    }
+                }
+                // if (EditorGUI.EndChangeCheck())
+                // {
+                //     var property = serializedObject.FindProperty("fieldVsObjects");
+                //     property.arraySize +=1 ;
+                // }
+            }
+            
             serializedObject.ApplyModifiedProperties();
         }
 
